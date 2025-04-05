@@ -6,3 +6,16 @@ stages:
       - src\data_cleaning.py
     outs:
       - data\cleaned\swiggy_cleaned.csv
+  
+ 
+  data_preparation:
+    cmd: python src/data_preparation.py
+    params:
+      - data_preparation.test_size
+      - data_preparation.random_state
+    deps:
+      - data/cleaned/swiggy_cleaned.csv
+      - src/data_preparation.py
+    outs:
+      - data/interim/train.csv
+      - data/interim/test.csv

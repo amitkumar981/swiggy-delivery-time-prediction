@@ -226,7 +226,7 @@ if __name__ == "__main__":
     # data save path
     cleaned_data_save_path = cleaned_data_save_dir / cleaned_data_filename
     # data load path
-    data_load_path = root_path / "data" / "raw" / "swiggy.csv"
+    data_load_path = root_path / "data" / "raw" /'swiggy.csv'
     
     # load the data
     df = load_data(data_load_path)
