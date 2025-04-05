@@ -138,10 +138,11 @@ def data_cleaning(data: pd.DataFrame) -> pd.DataFrame:
     if 'time_taken' in data.columns:
         data['time_taken'] = data['time_taken'].astype(str).str.split().str[1]
     
-    data.drop(columns=['id', 'delivery_ID', 'order_date', 'order_time', 'order_picked_time'], inplace=True)
+
     
     logger.info("Data cleaning process completed")
     return data
+
 
 def clean_lat_long(data: pd.DataFrame, threshold=1):
     logger.info("Cleaning latitude and longitude values")
@@ -194,9 +195,14 @@ def assign_distance_type(distance):
         return "long"
     else:
         return "very long"
-    
 
-
+def drop_columns(data: pd.DataFrame) -> pd.DataFrame:
+    return data.drop(columns=[
+        'id', 'delivery_ID', 'order_date', 'order_time', 'order_picked_time',
+        'latitude', 'longitude', 'delivery_location_latitude', 'delivery_location_longitude',
+        'order_time_hr', 'day', 'month', 'day_of_week'
+    ], errors='ignore')
+                              
 def perform_data_cleaning(data: pd.DataFrame, saved_data_path: str) -> None:
     logger.info("Starting full data processing pipeline")
 
@@ -206,7 +212,9 @@ def perform_data_cleaning(data: pd.DataFrame, saved_data_path: str) -> None:
     cleaned_data = (data.pipe(data_cleaning)
                     .pipe(clean_lat_long)
                     .pipe(calculate_haversine_distance)
-                    .assign(distance_type=lambda df: df["distance"].apply(assign_distance_type)))
+                    .assign(distance_type=lambda df: df["distance"].apply(assign_distance_type))
+                    .pipe(drop_columns))
+    
 
     cleaned_data.to_csv(saved_data_path, index=False)
     logger.info(f"Cleaned data saved to {saved_data_path}")

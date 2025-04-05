@@ -9,20 +9,20 @@ stages:
       size: 7772212
     - path: src\data_cleaning.py
       hash: md5
-      md5: ec4596fd8596ced5e067da4d4a7e98c4
-      size: 8929
+      md5: 3d159e9c1022b9c62394cd34b18a2f8b
+      size: 9237
     outs:
     - path: data\cleaned\swiggy_cleaned.csv
       hash: md5
-      md5: d50e456f1a1bd63b541b574aa2d4b283
-      size: 7268581
+      md5: 95aedc603aafdcb00c3d09e48f7996f6
+      size: 4801683
   data_preparation:
     cmd: python src/data_preparation.py
     deps:
     - path: data/cleaned/swiggy_cleaned.csv
       hash: md5
-      md5: d50e456f1a1bd63b541b574aa2d4b283
-      size: 7268581
+      md5: 95aedc603aafdcb00c3d09e48f7996f6
+      size: 4801683
     - path: src/data_preparation.py
       hash: md5
       md5: 9a89f2648b044779e9503292df47e206
@@ -34,9 +34,9 @@ stages:
     outs:
     - path: data/interim/test.csv
       hash: md5
-      md5: ece22d59e4f92d3334f33e46346f843d
-      size: 1816812
+      md5: 631a06e25e51c6e520f3a9a0df506097
+      size: 1198919
     - path: data/interim/train.csv
       hash: md5
-      md5: 2709bdce44009e6c6971706bafee6803
-      size: 5444669
+      md5: 25318f26e1ba3d8e53bf1bf4b9ebf5c9
+      size: 3595554
