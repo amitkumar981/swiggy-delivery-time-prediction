@@ -200,7 +200,7 @@ def drop_columns(data: pd.DataFrame) -> pd.DataFrame:
     return data.drop(columns=[
         'id', 'delivery_ID', 'order_date', 'order_time', 'order_picked_time',
         'latitude', 'longitude', 'delivery_location_latitude', 'delivery_location_longitude',
-        'order_time_hr', 'day', 'month', 'day_of_week'
+        'order_time_hr', 'day', 'month'
     ], errors='ignore')
                               
 def perform_data_cleaning(data: pd.DataFrame, saved_data_path: str) -> None:
@@ -222,7 +222,7 @@ def perform_data_cleaning(data: pd.DataFrame, saved_data_path: str) -> None:
     
 if __name__ == "__main__":
     # root path
-    root_path = Path(r"C:\Users\redhu\swiggy_delivery_time_prediction\swiggy-delivery-time-prediction").resolve()
+    root_path = Path(r"C:\Users\redhu\swiggy-delivery-time-prediction").resolve()
     print("Project Root:", root_path)
    
     # data save directory

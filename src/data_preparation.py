@@ -69,8 +69,8 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, save_path: Path
     """Save train_data and test_data to specified path"""
     try:
         logger.info(f"Saving data to directory: {save_path}")
-        train_data.to_csv(save_path / 'train.csv', index=False)
-        test_data.to_csv(save_path / 'test.csv', index=False)
+        train_data.to_csv(save_path / 'train_data.csv',index=False)
+        test_data.to_csv(save_path / 'test_data.csv',index=False)
         logger.info("Train and test data saved successfully")
     except Exception as e:
         logger.exception('Error while saving datasets')
@@ -80,7 +80,7 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, save_path: Path
 def main():
     try:
         # Define root project path
-        root_path = Path(r"C:\Users\redhu\swiggy_delivery_time_prediction\swiggy-delivery-time-prediction").resolve()
+        root_path = Path(r"C:\Users\redhu\swiggy-delivery-time-prediction").resolve()
 
         # Define paths
         data_path = root_path / 'data' / 'cleaned' / 'swiggy_cleaned.csv'  # <-- FIXED: actual file, not just folder
