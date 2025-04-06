@@ -6,6 +6,7 @@ from pathlib import Path
 import logging
 
 import logging
+import os
 
 #create logger
 logger = logging.getLogger('data_cleaning')
@@ -221,28 +222,49 @@ def perform_data_cleaning(data: pd.DataFrame, saved_data_path: str) -> None:
 
     
 if __name__ == "__main__":
-    # root path
-    root_path = Path(r"C:\Users\redhu\swiggy-delivery-time-prediction").resolve()
-    print("Project Root:", root_path)
-   
-    # data save directory
-    cleaned_data_save_dir = root_path / "data" / "cleaned"
-    # make directory if not exits
-    cleaned_data_save_dir.mkdir(exist_ok=True,parents=True)
-    # cleaned data file name
-    cleaned_data_filename = "swiggy_cleaned.csv"
-    # data save path
-    cleaned_data_save_path = cleaned_data_save_dir / cleaned_data_filename
-    # data load path
-    data_load_path = root_path / "data" / "raw" /'swiggy.csv'
-    
-    # load the data
-    df = load_data(data_load_path)
-    logger.info("Data read successfully")
+    def ensure_directory_exists(directory: Path):
+        """Ensure a directory exists; if not, create it."""
+        try:
+            if not directory.exists():
+                directory.mkdir(parents=True, exist_ok=True)
+                logger.debug(f"Created directory: {directory}")
+        except Exception as e:
+            logger.error(f"Error ensuring directory exists {directory}: {e}")
+            raise
 
-     # clean the data and save
-    perform_data_cleaning(data=df, saved_data_path=cleaned_data_save_path)
-    logger.info("Data cleaned and saved")
+    def get_root_directory() -> Path:
+        """Get the root directory (one level up from this script's location)."""
+        try:
+            current_dir = Path(__file__).resolve().parent
+            root_dir = current_dir.parent
+            logger.debug(f"Current directory: {current_dir}")
+            logger.debug(f"Resolved root directory: {root_dir}")
+            return root_dir
+        except Exception as e:
+            logger.error('Error getting root directory: %s', e)
+            raise
+
+    # Set root directory
+    root_path = get_root_directory()
+
+    # Define paths
+    data_load_path = root_path / "data" / "raw" / "swiggy.csv"
+    cleaned_data_save_dir = root_path / "data" / "cleaned"
+    ensure_directory_exists(cleaned_data_save_dir)
+    cleaned_data_filename = "swiggy_cleaned.csv"
+    cleaned_data_save_path = cleaned_data_save_dir / cleaned_data_filename
+
+    # Load data
+    df = load_data(str(data_load_path))
+    if not df.empty:
+        logger.info("Data read successfully")
+
+        # Clean and save data
+        perform_data_cleaning(data=df, saved_data_path=str(cleaned_data_save_path))
+        logger.info("Data cleaned and saved")
+    else:
+        logger.warning("No data to clean. Exiting.")
+
     
    
 

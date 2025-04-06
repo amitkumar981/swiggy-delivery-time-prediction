@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from pathlib import Path
 import logging
 import yaml
+import os
 
 # -------------------- Logging Setup --------------------
 
@@ -69,40 +70,70 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, save_path: Path
     """Save train_data and test_data to specified path"""
     try:
         logger.info(f"Saving data to directory: {save_path}")
-        train_data.to_csv(save_path / 'train_data.csv',index=False)
-        test_data.to_csv(save_path / 'test_data.csv',index=False)
+        train_data.to_csv(save_path / 'train_data.csv', index=False)
+        test_data.to_csv(save_path / 'test_data.csv', index=False)
         logger.info("Train and test data saved successfully")
     except Exception as e:
         logger.exception('Error while saving datasets')
+
+# -------------------- Utility Functions --------------------
+
+def ensure_directory_exists(directory: Path):
+    """Ensure a directory exists; if not, create it."""
+    try:
+        if not directory.exists():
+            directory.mkdir(parents=True, exist_ok=True)
+            logger.debug(f"Created directory: {directory}")
+    except Exception as e:
+        logger.error(f"Error ensuring directory exists {directory}: {e}")
+        raise
+
+def get_root_directory() -> Path:
+    """Get the root directory (one level up from this script's location)."""
+    try:
+        current_dir = Path(__file__).resolve().parent
+        root_dir = current_dir.parent
+        logger.debug(f"Current directory: {current_dir}")
+        logger.debug(f"Resolved root directory: {root_dir}")
+        return root_dir
+    except Exception as e:
+        logger.error('Error getting root directory: %s', e)
+        raise
 
 # -------------------- Main Function --------------------
 
 def main():
     try:
-        # Define root project path
-        root_path = Path(r"C:\Users\redhu\swiggy-delivery-time-prediction").resolve()
+        # Get current and root directories
+        current_dir = Path(__file__).resolve().parent
+        root_dir = get_root_directory()
+        print(root_dir)
 
         # Define paths
-        data_path = root_path / 'data' / 'cleaned' / 'swiggy_cleaned.csv'  # <-- FIXED: actual file, not just folder
-        params_path = root_path / 'params.yaml'
-        save_path = root_path / 'data' / 'interim'  # <-- FIXED: typo "imterim" to "interim"
+        data_path = root_dir/ 'data' / 'cleaned' / 'swiggy_cleaned.csv'
+        params_path = root_dir / 'params.yaml'
+        save_path = root_dir / 'data' / 'interim'
 
         # Load data
-        data = load_data(data_path)
+        data = load_data(str(data_path))
         if data.empty:
             logger.warning("Data is empty. Exiting.")
             return
 
         # Load parameters
-        params = load_params(params_path)
-        test_size = params['data_preparation']['test_size']
-        random_state = params['data_preparation']['random_state']
+        params = load_params(str(params_path))
+        if not params or 'data_preparation' not in params:
+            logger.error("Invalid or missing parameters in YAML. Exiting.")
+            return
+
+        test_size = params['data_preparation'].get('test_size', 0.2)
+        random_state = params['data_preparation'].get('random_state', 42)
 
         # Split data
         train_data, test_data = split_data(data, test_size=test_size, random_state=random_state)
 
-        # Create save directory if not exist
-        save_path.mkdir(exist_ok=True, parents=True)
+        # Ensure save directory exists
+        ensure_directory_exists(save_path)
 
         # Save datasets
         save_data(train_data, test_data, save_path)
@@ -113,7 +144,12 @@ def main():
 # -------------------- Entry Point --------------------
 
 if __name__ == '__main__':
-    main()  # <-- FIXED: added missing function call
+    main()
+     
+        
+
+        
+
 
 
 
