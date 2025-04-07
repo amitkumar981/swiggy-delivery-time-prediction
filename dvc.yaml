@@ -28,3 +28,19 @@ stages:
     outs:
       - data/processed/x_train_trans.pkl
       - data/processed/y_train.pkl
+
+  model_building:
+    cmd: python src/model/model_building.py
+    params:
+      - model_building.rf_params
+      - model_building.lgbm_params
+    deps:
+      - src/model/model_building.py
+      - data/processed/x_train_trans.pkl
+      - data/processed/y_train.pkl
+    outs:
+      - src/model/model.pkl
+      - src/model/transformer.pkl
+
+
+

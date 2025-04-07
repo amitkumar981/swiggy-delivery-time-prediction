@@ -64,3 +64,48 @@ stages:
       hash: md5
       md5: 8459672f6472a67cc89f8a4f70f26184
       size: 228353
+  model_building:
+    cmd: python src/model/model_building.py
+    deps:
+    - path: data/processed/x_train_trans.pkl
+      hash: md5
+      md5: 7295c33b75aa20404bb8cce2b9861676
+      size: 12552571
+    - path: data/processed/y_train.pkl
+      hash: md5
+      md5: 8459672f6472a67cc89f8a4f70f26184
+      size: 228353
+    - path: src/model/model_building.py
+      hash: md5
+      md5: 15730e8cf3b6a44d012282ad4478a34e
+      size: 4971
+    params:
+      params.yaml:
+        model_building.lgbm_params:
+          num_leaves: 80
+          max_depth: 7
+          learning_rate: 0.07521051144940308
+          n_estimators: 350
+          lambda_l1: 4.994553000952651
+          lambda_l2: 1.8523641834042492
+          min_data_in_leaf: 45
+          feature_fraction: 0.7095710565305883
+          bagging_fraction: 0.9976539330187573
+          bagging_freq: 4
+        model_building.rf_params:
+          n_estimators: 400
+          max_depth: 21
+          min_samples_split: 18
+          min_samples_leaf: 10
+          bootstrap: true
+          max_samples: 0.7634340439115328
+          min_impurity_decrease: 3.465395379320018e-05
+    outs:
+    - path: src/model/model.pkl
+      hash: md5
+      md5: be2247e414813e165aa7d93fb3c49969
+      size: 37520561
+    - path: src/model/transformer.pkl
+      hash: md5
+      md5: 335d0bfb8d08a453144ea233794643e5
+      size: 144
