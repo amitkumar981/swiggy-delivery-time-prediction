@@ -99,7 +99,7 @@ stages:
           min_samples_leaf: 10
           bootstrap: true
           max_samples: 0.7634340439115328
-          min_impurity_decrease: 3.465395379320018e-05
+          min_impurity_decrease: 3.465395379320017e-05
     outs:
     - path: src/model/model.pkl
       hash: md5
@@ -109,3 +109,26 @@ stages:
       hash: md5
       md5: 335d0bfb8d08a453144ea233794643e5
       size: 144
+  model_evaluation:
+    cmd: python src/model/model_evaluation.py
+    deps:
+    - path: data/interim/test_data.csv
+      hash: md5
+      md5: cb22eee210baa0347ea589426eccbf2d
+      size: 1291911
+    - path: data/interim/train_data.csv
+      hash: md5
+      md5: 570d42e704dc3ffc8cfd44651db8f776
+      size: 3873922
+    - path: data\processed\preprocessor.pkl
+      hash: md5
+      md5: f86c4db997dce6f73a8e5afb85525a47
+      size: 5187
+    - path: src/model/model.pkl
+      hash: md5
+      md5: be2247e414813e165aa7d93fb3c49969
+      size: 37520561
+    - path: src/model/model_evaluation.py
+      hash: md5
+      md5: 88f8328b4684bc6e1641a601fe2684c8
+      size: 10506

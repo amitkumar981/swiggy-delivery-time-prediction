@@ -41,6 +41,16 @@ stages:
     outs:
       - src/model/model.pkl
       - src/model/transformer.pkl
+    
+  model_evaluation:
+    cmd: python src/model/model_evaluation.py
+    deps:
+      - src/model/model_evaluation.py
+      - data/interim/train_data.csv
+      - data/interim/test_data.csv
+      - src/model/model.pkl
+      - data\processed\preprocessor.pkl
+
 
 
 
