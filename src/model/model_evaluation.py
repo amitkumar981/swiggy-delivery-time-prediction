@@ -197,11 +197,13 @@ def main():
          #load data
         test_data=load_data(os.path.join(root_dir,'data','interim','test_data.csv'))
         train_data=load_data(os.path.join(root_dir,'data','interim','train_data.csv'))
-        params=load_params(os.path.join(root_dir,'params.yaml'))
+        params = load_params(os.path.join(root_dir, 'params.yaml'))
 
-         # Log parameters
+        # Log parameters
         for key, value in params.items():
-            mlflow.log_param(key, value)
+           logger.info(f'Logging parameter: {key} = {value}')
+           mlflow.log_param(key, value)
+           logger.info('All parameters logged successfully.')
 
         preprocessor=load_preprocessor(os.path.join(root_dir,'data','processed','preprocessor.pkl'))
         
@@ -225,82 +227,82 @@ def main():
         y_test_pred=model.predict(x_test_trans)
 
            # calculate the train and test mae
-    train_mae = mean_absolute_error(y_train,y_train_pred)
-    test_mae = mean_absolute_error(y_test,y_test_pred)
-    logger.info("error calculated")
+        train_mae = mean_absolute_error(y_train,y_train_pred)
+        test_mae = mean_absolute_error(y_test,y_test_pred)
+        logger.info("error calculated")
     
-    # calculate the r2 scores
-    train_r2 = r2_score(y_train,y_train_pred)
-    test_r2 = r2_score(y_test,y_test_pred)
-    logger.info("r2 score calculated")
+        # calculate the r2 scores
+        train_r2 = r2_score(y_train,y_train_pred)
+        test_r2 = r2_score(y_test,y_test_pred)
+        logger.info("r2 score calculated")
     
     # calculate cross val scores
-    cv_scores = cross_val_score(model,
-                                x_train_trans,
-                                y_train,
-                                cv=5,
-                                scoring="neg_mean_absolute_error",
-                                n_jobs=-1)
-    logger.info("cross validation complete")
+        cv_scores = cross_val_score(model,
+                                    x_train_trans,
+                                    y_train,
+                                    cv=5,
+                                    scoring="neg_mean_absolute_error",
+                                    n_jobs=-1)
+        logger.info("cross validation complete")
+        
+        # mean cross val score
+        mean_cv_score = -(cv_scores.mean())
+
+        # log metrics
+        mlflow.log_metric("train_mae",train_mae)
+        mlflow.log_metric("test_mae",test_mae)
+        mlflow.log_metric("train_r2",train_r2)
+        mlflow.log_metric("test_r2",test_r2)
+        mlflow.log_metric("mean_cv_score",-(cv_scores.mean()))
+
+            # log individual cv scores
+        mlflow.log_metrics({f"CV {num}": score for num, score in enumerate(-cv_scores)})
+            
+            # mlflow dataset input datatype
+        train_data_input = mlflow.data.from_pandas(train_data,targets=TARGET)
+        test_data_input = mlflow.data.from_pandas(test_data,targets=TARGET)
+        
+        # get the current run artifact uri
+        artifact_uri = mlflow.get_artifact_uri()
+            
+        logger.info("Mlflow logging complete and model logged")
+            
+        # get the run id 
+        run_id = run.info.run_id
+        model_name = "delivery_time_pred_model"
+        
     
-    # mean cross val score
-    mean_cv_score = -(cv_scores.mean())
 
-    # log metrics
-    mlflow.log_metric("train_mae",train_mae)
-    mlflow.log_metric("test_mae",test_mae)
-    mlflow.log_metric("train_r2",train_r2)
-    mlflow.log_metric("test_r2",test_r2)
-    mlflow.log_metric("mean_cv_score",-(cv_scores.mean()))
+        # log input
+        mlflow.log_input(dataset=train_data_input,context="training")
+        mlflow.log_input(dataset=test_data_input,context="validation")
+            
+            # model signature
+        sample_input = x_train.sample(20, random_state=42)
+        sample_transformed = preprocessor.transform(sample_input)
+        model_signature = mlflow.models.infer_signature(model_input=sample_transformed,
+                                                    model_output=model.predict(sample_transformed))
 
-        # log individual cv scores
-    mlflow.log_metrics({f"CV {num}": score for num, score in enumerate(-cv_scores)})
-        
-        # mlflow dataset input datatype
-    train_data_input = mlflow.data.from_pandas(train_data,targets=TARGET)
-    test_data_input = mlflow.data.from_pandas(test_data,targets=TARGET)
-    
-     # get the current run artifact uri
-    artifact_uri = mlflow.get_artifact_uri()
-        
-    logger.info("Mlflow logging complete and model logged")
-        
-    # get the run id 
-    run_id = run.info.run_id
-    model_name = "delivery_time_pred_model"
-    
- 
+            
+            # log the final model
+        mlflow.sklearn.log_model(model,"delivery_time_pred_model",signature=model_signature)
 
-    # log input
-    mlflow.log_input(dataset=train_data_input,context="training")
-    mlflow.log_input(dataset=test_data_input,context="validation")
-        
-        # model signature
-    sample_input = x_train.sample(20, random_state=42)
-    sample_transformed = preprocessor.transform(sample_input)
-    model_signature = mlflow.models.infer_signature(model_input=sample_transformed,
-                                                model_output=model.predict(sample_transformed))
+        # get the current run artifact uri
+        artifact_uri = mlflow.get_artifact_uri()
+            
+        logger.info("Mlflow logging complete and model logged")
+            
+        # get the run id 
+        run_id = run.info.run_id
+        model_name = "delivery_time_pred_model"
 
-        
-        # log the final model
-    mlflow.sklearn.log_model(model,"delivery_time_pred_model",signature=model_signature)
-
-     # get the current run artifact uri
-    artifact_uri = mlflow.get_artifact_uri()
-        
-    logger.info("Mlflow logging complete and model logged")
-        
-    # get the run id 
-    run_id = run.info.run_id
-    model_name = "delivery_time_pred_model"
-
-       # save the model info
-    save_json_path = os.path.join(root_dir , "run_information.json")
-    save_model_info(save_json_path=save_json_path,
-                    run_id=run_id,
-                    artifact_path=artifact_uri,
-                    model_name=model_name)
-    logger.info("Model Information saved")
+        # save the model info
+        save_json_path = os.path.join(root_dir , "run_information.json")
+        save_model_info(save_json_path=save_json_path,
+                        run_id=run_id,
+                        artifact_path=artifact_uri,
+                        model_name=model_name)
+        logger.info("Model Information saved")
 if __name__ == "__main__":
     main()
     
