@@ -1,32 +1,32 @@
 schema: '2.0'
 stages:
   data_cleaning:
-    cmd: python src/data_cleaning.py
+    cmd: python src/data/data_cleaning.py
     deps:
     - path: data/raw/swiggy.csv
       hash: md5
       md5: 0b050b37dfe6cfbfaa18d7cb4e454377
       size: 7772212
-    - path: src/data_cleaning.py
+    - path: src/data/data_cleaning.py
       hash: md5
-      md5: ae6375f08f0ccf1248bff9788da6708a
-      size: 10039
+      md5: c5d3399453d4f6a3b1635976263cd643
+      size: 10046
     outs:
     - path: data/cleaned/swiggy_cleaned.csv
       hash: md5
       md5: 9fc24164b5171134e3ebc44e7913703d
       size: 5173031
   data_preparation:
-    cmd: python src/data_preparation.py
+    cmd: python src/data/data_preparation.py
     deps:
     - path: data/cleaned/swiggy_cleaned.csv
       hash: md5
       md5: 9fc24164b5171134e3ebc44e7913703d
       size: 5173031
-    - path: src/data_preparation.py
+    - path: src/data/data_preparation.py
       hash: md5
-      md5: 1c2171445ccbeaa7ef241189541253c0
-      size: 5515
+      md5: 25f6e43bfa2a1e5708d9250d8a8a33ec
+      size: 5522
     params:
       params.yaml:
         data_preparation.random_state: 42
@@ -41,7 +41,7 @@ stages:
       md5: 570d42e704dc3ffc8cfd44651db8f776
       size: 3873922
   data_preprocessing:
-    cmd: python src/data_preprocessing.py
+    cmd: python src/feature_engineering/data_preprocessing.py
     deps:
     - path: data/interim/test_data.csv
       hash: md5
@@ -51,10 +51,10 @@ stages:
       hash: md5
       md5: 570d42e704dc3ffc8cfd44651db8f776
       size: 3873922
-    - path: src/data_preprocessing.py
+    - path: src/feature_engineering/data_preprocessing.py
       hash: md5
-      md5: d66a69d2af247a7726e0be6ee71a21fc
-      size: 5693
+      md5: 0ecda9f20481d96d5ac5fc5c0ae67316
+      size: 5681
     outs:
     - path: data/processed/x_train_trans.pkl
       hash: md5
@@ -132,3 +132,19 @@ stages:
       hash: md5
       md5: 4955251306264e85928311284d7a330e
       size: 11082
+    outs:
+    - path: run_information.json
+      hash: md5
+      md5: b8b58fb5996c76f6ed639dbf7a85f51c
+      size: 220
+  register_model:
+    cmd: python src/model/register_model.py
+    deps:
+    - path: run_information.json
+      hash: md5
+      md5: b8b58fb5996c76f6ed639dbf7a85f51c
+      size: 220
+    - path: src/model/register_model.py
+      hash: md5
+      md5: c01eed829cee9728be55156ef834969e
+      size: 3681
