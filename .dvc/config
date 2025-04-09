@@ -1,2 +1,4 @@
+[core]
+    remote = myremote
 ['remote "myremote"']
-    url = C:\Users\redhu\swiggy_delivery_time_prediction\data
+    url = s3://swiggy-food-delivery-time-prediction-bucket

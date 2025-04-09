@@ -255,6 +255,10 @@ def main():
         mlflow.log_metric("test_r2",test_r2)
         mlflow.log_metric("mean_cv_score",-(cv_scores.mean()))
 
+        #log_artfacts
+        mlflow.log_artifact(os.path.join(root_dir,'data','processed','preprocessor.pkl'))
+        mlflow.log_artifact(os.path.join(root_dir,'transformer.pkl'))
+
             # log individual cv scores
         mlflow.log_metrics({f"CV {num}": score for num, score in enumerate(-cv_scores)})
             
