@@ -31,8 +31,7 @@ dagshub.init(repo_owner='amitkumar981', repo_name='swiggy-delivery-time-predicti
  #set tracking uri
 mlflow.set_tracking_uri('https://dagshub.com/amitkumar981/swiggy-delivery-time-prediction.mlflow')
 
-import logging
-import json
+
 
 logger = logging.getLogger('model_evaluation')
 
@@ -91,7 +90,7 @@ def main():
     model_info=load_model_info(os.path.join(root_dir,'run_information.json'))
 
     #get run id and model name from model info
-    run_id=model_info['ru_id']
+    run_id=model_info['run_id']
     model_name=model_info['model_name']
 
     #model  to register path
@@ -99,7 +98,7 @@ def main():
 
     #register model version
 
-    model_version=mlflow.register_model(model_uri=model_registry_path,model_name=model_name)
+    model_version=mlflow.register_model(model_uri=model_registry_path,name=model_name)
 
     #get the model version
     registered_model_version=model_version.version
@@ -109,8 +108,12 @@ def main():
 
     #update the model version
     client=MlflowClient()
-    client.transition_model_version_stage(model_name=registered_model_name,version=registered_model_version,
+    client.transition_model_version_stage(name=registered_model_name,version=registered_model_version,
                                           stage='staging')
+
+if __name__=="__main__":
+    main()
+
     
     
         
