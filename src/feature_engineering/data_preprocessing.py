@@ -18,7 +18,7 @@ num_cols = ['person_age', 'person_ratings', 'pickup_time_in_minutes', 'distance'
 num_cat_cols = ['weather_condition', 'order_type', 'vehicle_type', 'multiple_deliveries', 'city', 'festival',
                 'city_name', 'day_of_week', 'time_slot']
 ordinal_cat_cols = ['traffic_density', 'distance_type']
-traffic_order = ['Low ', 'Medium ', 'High ', 'Jam ']
+traffic_order = ['medium', 'high', 'jam', 'low']
 distance_order = ['short', 'medium', 'long', 'very long']
 
 target_column = ['time_taken']
