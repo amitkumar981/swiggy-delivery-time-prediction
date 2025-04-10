@@ -108,9 +108,10 @@ def data_cleaning(data: pd.DataFrame) -> pd.DataFrame:
 
     if 'multiple_deliveries' in data.columns:
         data['multiple_deliveries'] = data['multiple_deliveries'].astype(float)
+    if 'traffic_density' in data.columns:
+        data['traffic_density'] = data['traffic_density'].astype(str).str.lower().str.strip()
 
-    if 'time_taken' in data.columns:
-        data['time_taken'] = data['time_taken'].astype(str).str.split().str[1]
+    
     return data
 
 def clean_lat_long(data: pd.DataFrame, threshold=1):

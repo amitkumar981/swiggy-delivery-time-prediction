@@ -55,7 +55,7 @@ num_cols = ['person_age', 'person_ratings', 'pickup_time_in_minutes', 'distance'
 num_cat_cols = ['weather_condition', 'order_type', 'vehicle_type', 'multiple_deliveries', 'city', 'festival',
                 'city_name', 'day_of_week', 'time_slot']
 ordinal_cat_cols = ['traffic_density', 'distance_type']
-traffic_order = ['Low ', 'Medium ', 'High ', 'Jam ']
+traffic_order = ['medium', 'high', 'jam', 'low']
 distance_order = ['short', 'medium', 'long', 'very long']
 
 #mlflow client
@@ -118,7 +118,7 @@ def do_predictions(data: Data):
         },index=[0]
     )
     # clean the raw input data
-    cleaned_data = perform_data_cleaning(pred_data)
+    cleaned_data = perform_data_cleaning(pred_data).dropna()
     # get the predictions
     predictions = model_pipe.predict(cleaned_data)[0]
 
