@@ -28,7 +28,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ap-southeast-2
       run: |
-        dvc pull -v
+        dvc pull
 
     - name: Run DVC Pipeline
       env:
