@@ -21,6 +21,14 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    
+    - name: Run DVC pull
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCES_KEY }}
+        AWS_DEFAULT_REGION: ap-southeast-2
+      run: |
+        dvc pull
 
     - name: Run DVC Pipeline
       env:
