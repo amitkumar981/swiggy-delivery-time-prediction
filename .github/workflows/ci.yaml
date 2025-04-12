@@ -24,6 +24,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install dvc[s3]  # Ensure DVC with S3 support is installed
+        pip install dagshub
 
     - name: Configure AWS credentials
       run: echo "AWS credentials will be passed via env."
