@@ -103,8 +103,8 @@ stages:
     outs:
     - path: src/model/model.pkl
       hash: md5
-      md5: 1c7c3c1c8dbf09a438d809297170282f
-      size: 37512858
+      md5: d88ab85048fd7434a2ea626db582add2
+      size: 37499322
     - path: src/model/transformer.pkl
       hash: md5
       md5: 335d0bfb8d08a453144ea233794643e5
@@ -126,8 +126,8 @@ stages:
       size: 5164
     - path: src/model/model.pkl
       hash: md5
-      md5: 1c7c3c1c8dbf09a438d809297170282f
-      size: 37512858
+      md5: d88ab85048fd7434a2ea626db582add2
+      size: 37499322
     - path: src/model/model_evaluation.py
       hash: md5
       md5: 1e7e19ee71c113f8c013226a84029058
@@ -135,14 +135,14 @@ stages:
     outs:
     - path: run_information.json
       hash: md5
-      md5: c27ca0b802a4308b6687253912b94069
+      md5: 5b912bc9435edad0fbc902dc3ff2d696
       size: 216
   register_model:
     cmd: python src/model/register_model.py
     deps:
     - path: run_information.json
       hash: md5
-      md5: c27ca0b802a4308b6687253912b94069
+      md5: 5b912bc9435edad0fbc902dc3ff2d696
       size: 216
     - path: src/model/register_model.py
       hash: md5
