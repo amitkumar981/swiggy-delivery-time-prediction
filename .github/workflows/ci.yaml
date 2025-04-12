@@ -26,23 +26,8 @@ jobs:
         pip install dvc[s3]  # Ensure DVC with S3 support is installed
         pip install dagshub
 
-    - name: Configure AWS credentials
-      run: echo "AWS credentials will be passed via env."
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ap-southeast-2
-
-    - name: Debug AWS credentials (temp)
-      run: |
-        echo "AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}"
-        echo "SECRET length: ${#AWS_SECRET_ACCESS_KEY}"
-        aws --version || echo "awscli not installed"
-        aws sts get-caller-identity || echo "Credentials invalid or STS disabled"
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ap-southeast-2
+   
+ 
 
     - name: Pull DVC-tracked data
       run: dvc pull
