@@ -52,6 +52,8 @@ jobs:
         AWS_DEFAULT_REGION: ap-southeast-2
 
     - name: Run DVC Pipeline
+      env:
+         DAGSHUB_USER_TOKEN: ${{secrets.CI_TOKEN}}
       run: dvc repro
 
     - name: Push DVC-tracked data to remote
