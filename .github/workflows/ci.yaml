@@ -1,6 +1,6 @@
 name: CI-CD Pipeline
 
-on: 
+on:
   push:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       with:
-        lfs: true  
+        lfs: true
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -27,11 +27,11 @@ jobs:
         pip install dagshub
 
     - name: Pull DVC-tracked data
-      run: dvc pull
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ap-southeast-2
+      run: dvc pull
 
     - name: Run DVC Pipeline
       env:
@@ -39,11 +39,11 @@ jobs:
       run: dvc repro
 
     - name: Push DVC-tracked data to remote
-      run: dvc push
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ap-southeast-2
+      run: dvc push
 
     - name: Configure Git
       run: |
@@ -82,41 +82,39 @@ jobs:
         DAGSHUB_USER_TOKEN: ${{ secrets.CI_TOKEN }}
       run: python notebooks/promote_model_to_production.py
 
-    - name: Log in to ECR 
-      if: success()
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-southeast-2
+
+    - name: Log in to ECR
       run: |
-        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com
-       
+        aws ecr get-login-password --region ap-southeast-2 | \
+        docker login --username AWS --password-stdin 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com
 
     - name: Build Docker image
-      if: success()
       run: docker build -t swiggy-food-delivery-time-prediction .
 
     - name: Tag Docker image
-      if: success()
       run: |
         docker tag swiggy-food-delivery-time-prediction:latest \
         565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/swiggy-food-delivery-time-prediction:latest
 
     - name: Push Docker image to AWS ECR
-      if: success()
       run: |
         docker push 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/swiggy-food-delivery-time-prediction:latest
 
     - name: Zip files for deployment
-      if: success()
       run: |
         zip -r deployment.zip appspec.yml deploy/scripts/install_dependencies.sh deploy/scripts/start_docker.sh
 
     - name: Upload ZIP to S3
-      if: success()
       run: |
         aws s3 cp deployment.zip s3://delivery-time-predictor-code-deploy-bucket/deployment.zip
 
     - name: Deploy to AWS CodeDeploy
-      if: success()
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
