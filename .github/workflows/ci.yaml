@@ -80,6 +80,39 @@ jobs:
       run: |
         pytest tests/test_model_perf.py
 
+    - name: Run Model Loading test
+      env:
+        DAGSHUB_USER_TOKEN: ${{secrets.CI_TOKEN}}
+      run: |
+        notebooks/promote_model_to_production.py
+    - name: loging to ECR 
+      if: success()
+      run: |
+        AWS_ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ap-southeast-2
+        aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS 
+        --password-stdin 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com
+    - name: build docker image
+      if: success()
+      run: |
+        docker build -t swiggy-food-delivery-time-prediction .
+    - name: Tag docker image
+      if: success()
+      run: |
+        docker tag swiggy-food-delivery-time-prediction:latest 
+        565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/swiggy-food-delivery-time-prediction:latest
+    - name: Push Docker image to AWS ECR
+      if: success()
+      run: |
+        docker push 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/
+        swiggy-food-delivery-time-prediction:latest
+
+
+
+
+
+
 
 
       
