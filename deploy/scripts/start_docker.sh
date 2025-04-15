@@ -23,5 +23,8 @@ if [ "$(docker ps -aq -f name=swiggy-food-delivery-time-prediction)" ]; then
 fi
 
 echo "Starting new container..."
-docker run -d -p 80:8000 --name swiggy-food-delivery-time-prediction -e DAGSHUB_USER_TOKEN=$CI_TOKEN 565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/swiggy-food-delivery-time-prediction:latest
+docker run -d -p 80:8000 --name swiggy-food-delivery-time-prediction \
+  -e DAGSHUB_USER_TOKEN=$CI_TOKEN \
+  565393027942.dkr.ecr.ap-southeast-2.amazonaws.com/swiggy-food-delivery-time-prediction:latest
+
 echo "Container started successfully."
