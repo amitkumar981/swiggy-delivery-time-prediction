@@ -1,4 +1,6 @@
 [core]
-    remote = myremote
+    remote = swiggyremote
 ['remote "myremote"']
+    url = s3://swiggy-food-delivery-time-prediction-bucket
+['remote "swiggyremote"']
     url = s3://swiggy-food-delivery-time-prediction-bucket
